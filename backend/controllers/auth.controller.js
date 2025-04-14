@@ -55,10 +55,17 @@ export const signup = async (req,res)=>{
 export const login = async (req,res)=>{
     try {
         const {userName,password} = req.body;
+        console.log(userName,password);
         const user = await User.findOne({userName});
+        console.log(user)
+        if(!user ){
+            console.log("InValid User ")
+            return res.status(400).json({error: "Invalid username"})
+        }
         const ispasswordCorrect = await bcrypt.compare(password,user.password || "");
         if(!user || !ispasswordCorrect){
-            res.status(400).json({error: "Invalid username or password"})
+            console.log("InValid Password")
+            return res.status(400).json({error: "Invalid password"})
         }
         generateTokenAndSetCookie(user._id,res);
 
@@ -74,7 +81,7 @@ export const login = async (req,res)=>{
         });
     } catch (error) {
         console.log("login error:", error.message);
-        res.status(500).json({error : "Internal Server Error"});
+        res.status(500).json({error : "User not found"});
     }
 }
 
