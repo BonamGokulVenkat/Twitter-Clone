@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const LoginPage = () => {
 	const [formData, setFormData] = useState({
-		userName: "",
+		username: "",
 		password: "",
 	});
 	const queryClient = useQueryClient();
@@ -22,14 +22,14 @@ const LoginPage = () => {
 		isError,
 		error,
 	} = useMutation({
-		mutationFn: async ({ userName, password }) => {
+		mutationFn: async ({ username, password }) => {
 			try {
 				const res = await fetch("/api/auth/login", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ userName, password }),
+					body: JSON.stringify({ username, password }),
 				});
 
 				const data = await res.json();
@@ -38,13 +38,11 @@ const LoginPage = () => {
 					throw new Error(data.error || "Something went wrong");
 				}
 			} catch (error) {
-				throw new Error(error);
+				throw new Error(error.message);
 			}
 		},
 		onSuccess: () => {
 			toast.success("Login Success");
-
-			// refetch the authUser
 			queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		},
 	});
@@ -60,7 +58,7 @@ const LoginPage = () => {
 
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen'>
-			<div className='flex-1 hidden lg:flex items-center  justify-center'>
+			<div className='flex-1 hidden lg:flex items-center justify-center'>
 				<XSvg className='lg:w-2/3 fill-white' />
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
@@ -72,8 +70,8 @@ const LoginPage = () => {
 						<input
 							type='text'
 							className='grow'
-							placeholder='userName'
-							name='userName'
+							placeholder='username'
+							name='username'
 							onChange={handleInputChange}
 							value={formData.username}
 						/>

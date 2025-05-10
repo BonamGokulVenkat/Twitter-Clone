@@ -4,12 +4,12 @@ import {generateTokenAndSetCookie} from "../lib/utils/generateToken.js"
 
 export const signup = async (req,res)=>{
     try {
-        const {fullName, userName, email, password} = req.body;
+        const {fullName, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
 			return res.status(400).json({ error: "Invalid email format" });
 		}
-        const existingUser = await User.findOne({userName});
+        const existingUser = await User.findOne({username});
         if (existingUser) {
             return res.status(400).json({ error: "userName already taken" });
         }
@@ -25,7 +25,7 @@ export const signup = async (req,res)=>{
         const hashedPassword = await bcrypt.hash(password,salt);
         const newUser = new User({
             fullName,
-            userName,
+            username,
             email,
             password:hashedPassword,
         })
@@ -36,7 +36,7 @@ export const signup = async (req,res)=>{
             res.status(201).json({
 				_id: newUser._id,
 				fullName: newUser.fullName,
-				userName: newUser.userName,
+				username: newUser.username,
 				email: newUser.email,
 				followers: newUser.followers,
 				following: newUser.following,
@@ -54,9 +54,9 @@ export const signup = async (req,res)=>{
 
 export const login = async (req,res)=>{
     try {
-        const {userName,password} = req.body;
-        console.log(userName,password);
-        const user = await User.findOne({userName});
+        const {username,password} = req.body;
+        //console.log(username,password);
+        const user = await User.findOne({username});
         console.log(user)
         if(!user ){
             console.log("InValid User ")
@@ -72,7 +72,7 @@ export const login = async (req,res)=>{
         res.status(201).json({
             _id: user._id,
             fullName: user.fullName,
-            userName: user.userName,
+            username: user.username,
             email: user.email,
             followers: user.followers,
             following: user.following,
